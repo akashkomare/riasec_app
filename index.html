@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIASEC Career Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .question-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option {
+            background: white;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            border-color: #3498db;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+        
+        .option input {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            transition: width 0.3s;
+        }
+        
+        .results-container {
+            text-align: center;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .top-codes {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RIASEC Career Assessment</h1>
+            <p>Discover your career personality type</p>
+        </div>
+        
+        <div class="content">
+            <!-- User Info Form -->
+            <div id="userInfoSection" class="form-section">
+                <h2>Personal Information</h2>
+                <form id="userInfoForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation">Current Occupation</label>
+                        <input type="text" id="occupation" name="occupation">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <button type="submit" class="btn">Start Assessment</button>
+                </form>
+            </div>
+            
+            <!-- Assessment Section -->
+            <div id="assessmentSection" class="form-section hidden">
+                <div class="progress-bar">
+                    <div id="progress" class="progress" style="width: 0%"></div>
+                </div>
+                <div id="questionContainer" class="question-container">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+                <div class="navigation">
+                    <button id="prevBtn" class="btn" style="background: #95a5a6;">Previous</button>
+                    <button id="nextBtn" class="btn">Next Question</button>
+                    <button id="submitBtn" class="btn hidden" style="background: #e74c3c;">Submit Assessment</button>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="resultsSection" class="form-section hidden">
+                <div class="results-container">
+                    <h2>Your Assessment Results</h2>
+                    
+                    <div class="top-codes">
+                        <h3>Your Top 3 RIASEC Codes</h3>
+                        <div id="topCodes" style="font-size: 2em; font-weight: bold; margin: 10px 0;"></div>
+                        <p>These represent your primary career personality types</p>
+                    </div>
+                    
+                    <h3>RIASEC Scores</h3>
+                    <div class="results-grid" id="riasecScores">
+                        <!-- RIASEC scores will be populated here -->
+                    </div>
+                    
+                    <h3>Aptitude Scores</h3>
+                    <div class="results-grid" id="aptitudeScores">
+                        <!-- Aptitude scores will be populated here -->
+                    </div>
+                    
+                    <button id="newAssessment" class="btn" style="margin-top: 20px;">Start New Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let currentUser = null;
+        let currentQuestion = 1;
+        let answers = {};
+        let questions = [];
+        const totalQuestions = 30;
+
+        // DOM Elements
+        const userInfoSection = document.getElementById('userInfoSection');
+        const assessmentSection = document.getElementById('assessmentSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const userInfoForm = document.getElementById('userInfoForm');
+        const questionContainer = document.getElementById('questionContainer');
+        const progressBar = document.getElementById('progress');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const newAssessmentBtn = document.getElementById('newAssessment');
+
+        // Event Listeners
+        userInfoForm.addEventListener('submit', startAssessment);
+        prevBtn.addEventListener('click', showPreviousQuestion);
+        nextBtn.addEventListener('click', showNextQuestion);
+        submitBtn.addEventListener('click', submitAssessment);
+        newAssessmentBtn.addEventListener('click', resetAssessment);
+
+        // RIASEC code descriptions
+        const riasecDescriptions = {
+            'R': 'Realistic - Doers',
+            'I': 'Investigative - Thinkers',
+            'A': 'Artistic - Creators',
+            'S': 'Social - Helpers',
+            'E': 'Enterprising - Persuaders',
+            'C': 'Conventional - Organizers'
+        };
+
+        // Aptitude descriptions
+        const aptitudeDescriptions = {
+            'Technical': 'Ability to work with tools, machines, and technology',
+            'Spatial': 'Ability to visualize and manipulate objects in space',
+            'Analytical': 'Ability to analyze information and solve problems',
+            'Creative': 'Ability to think creatively and generate new ideas',
+            'Verbal': 'Ability to communicate effectively with words'
+        };
+
+        async function startAssessment(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(userInfoForm);
+            const userData = {
+                name: formData.get('name'),
+                occupation: formData.get('occupation'),
+                email: formData.get('email')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/start-assessment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                currentUser = data.user_id;
+                questions = data.questions;
+                
+                userInfoSection.classList.add('hidden');
+                assessmentSection.classList.remove('hidden');
+                
+                loadQuestion(currentQuestion);
+                updateProgress();
+            } catch (error) {
+                console.error('Error starting assessment:', error);
+                showError('Error starting assessment. Please make sure the server is running on port 5000.');
+            }
+        }
+
+        function loadQuestion(questionNumber) {
+            const question = questions.find(q => q.number === questionNumber);
+            if (!question) return;
+
+            questionContainer.innerHTML = `
+                <div class="question-number">Question ${question.number} of ${totalQuestions}</div>
+                <div class="question-text">${question.question}</div>
+                <div class="options-container">
+                    ${Object.entries(question.options).map(([key, option]) => `
+                        <div class="option ${answers[question.number] === key ? 'selected' : ''}" 
+                             onclick="selectOption(${question.number}, '${key}')">
+                            <label><strong>${key}:</strong> ${option.text}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Update navigation buttons
+            prevBtn.disabled = questionNumber === 1;
+            nextBtn.classList.toggle('hidden', questionNumber === totalQuestions);
+            submitBtn.classList.toggle('hidden', questionNumber !== totalQuestions);
+        }
+
+        function selectOption(questionNumber, option) {
+            answers[questionNumber] = option;
+            loadQuestion(currentQuestion);
+        }
+
+        function showPreviousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                loadQuestion(currentQuestion);
+                updateProgress();
+            }
+        }
+
+        function showNextQuestion() {
+            if (currentQuestion < totalQuestions && answers[currentQuestion]) {
+                currentQuestion++;
+                loadQuestion(currentQuestion);
+                updateProgress();
+            } else if (!answers[currentQuestion]) {
+                alert('Please select an answer before proceeding.');
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        async function submitAssessment() {
+            if (Object.keys(answers).length !== totalQuestions) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/submit-assessment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUser,
+                        answers: answers
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                showResults(data.results);
+            } catch (error) {
+                console.error('Error submitting assessment:', error);
+                showError('Error submitting assessment. Please try again.');
+            }
+        }
+
+        function showResults(results) {
+            assessmentSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+
+            // Display top codes
+            document.getElementById('topCodes').textContent = results.top_codes.join(' - ');
+
+            // Display RIASEC scores
+            const riasecContainer = document.getElementById('riasecScores');
+            riasecContainer.innerHTML = Object.entries(results.riasec_scores)
+                .map(([code, score]) => `
+                    <div class="result-card">
+                        <h3>${riasecDescriptions[code]}</h3>
+                        <div class="result-value">${score}</div>
+                    </div>
+                `).join('');
+
+            // Display aptitude scores
+            const aptitudeContainer = document.getElementById('aptitudeScores');
+            aptitudeContainer.innerHTML = Object.entries(results.aptitude_scores)
+                .map(([aptitude, score]) => `
+                    <div class="result-card">
+                        <h3>${aptitude}</h3>
+                        <div class="result-value">${score}</div>
+                        <small>${aptitudeDescriptions[aptitude]}</small>
+                    </div>
+                `).join('');
+        }
+
+        function resetAssessment() {
+            currentUser = null;
+            currentQuestion = 1;
+            answers = {};
+            questions = [];
+            
+            resultsSection.classList.add('hidden');
+            userInfoSection.classList.remove('hidden');
+            userInfoForm.reset();
+        }
+
+        function showError(message) {
+            // Remove any existing error messages
+            const existingError = document.querySelector('.error');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            userInfoSection.insertBefore(errorDiv, userInfoForm);
+        }
+    </script>
+</body>
+</html>
